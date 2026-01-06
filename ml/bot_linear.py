@@ -1,13 +1,12 @@
 import time
-import os
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
-# CONFIG
-FILE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'index.html'))
-TARGET_URL = f"file:///{FILE_PATH}"
+# --- CONFIGURATION UPDATE ---
+# TARGET_URL = "http://localhost:5173"  # Standard Vite Port
+TARGET_URL = "http://localhost:5173" 
 
 options = webdriver.ChromeOptions()
 options.add_argument("--disable-blink-features=AutomationControlled")
@@ -23,7 +22,6 @@ def force_mouse_event(driver, x, y):
         }});
         document.dispatchEvent(evt);
         
-        // Move the visual red dot too
         var dot = document.getElementById('bot_ghost_cursor');
         if(!dot) {{
             dot = document.createElement('div');
@@ -36,17 +34,21 @@ def force_mouse_event(driver, x, y):
     """)
 
 try:
-    print("--- RUNNING LINEAR BOT ---")
+    print("--- RUNNING LINEAR BOT (React Version) ---")
     driver.get(TARGET_URL)
-    time.sleep(1)
+    time.sleep(2) # Wait for React to load
 
-    # 1. Fill Inputs
-    driver.find_element(By.ID, "aadhar").send_keys("123456789012")
-    driver.find_element(By.ID, "otp").send_keys("123456")
+    # 1. Fill Inputs (Using XPath because React code has no IDs)
+    # Field 1: Name
+    driver.find_element(By.XPATH, "//input[@placeholder='Enter Name as per Aadhaar']").send_keys("Bot User")
+    
+    # Field 2: Aadhar (The code will auto-format this)
+    driver.find_element(By.XPATH, "//input[@placeholder='XXXX XXXX XXXX']").send_keys("123456789012")
 
     # 2. Calculate Perfect Line
-    start_el = driver.find_element(By.ID, "otp")
-    end_el = driver.find_element(By.ID, "loginBtn")
+    # We move from the Aadhar Input (closest to button) to the Button
+    start_el = driver.find_element(By.XPATH, "//input[@placeholder='XXXX XXXX XXXX']")
+    end_el = driver.find_element(By.XPATH, "//button[@type='submit']")
     
     start_rect = start_el.rect
     end_rect = end_el.rect
@@ -67,16 +69,16 @@ try:
         curr_y = start_y + (end_y - start_y) * t
         
         force_mouse_event(driver, curr_x, curr_y)
-        time.sleep(0.01) # 10ms delay (Fast but detectable)
+        time.sleep(0.01) # 10ms delay
 
     # 4. Click
     end_el.click()
     
-    time.sleep(2)
+    time.sleep(5)
     print("\nCHECK YOUR APP.PY TERMINAL! Look for 'Efficiency: 1.0'")
 
 except Exception as e:
     print(f"Error: {e}")
 finally:
-    time.sleep(5)
+    time.sleep(2)
     driver.quit()

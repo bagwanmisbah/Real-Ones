@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+@theme {
+  /* This tells Tailwind to create these color classes */
+  --color-brand-green: #00a82d;
+  --color-brand-dark: #005d13;
+  
+  --color-grey-15: #262626;
+  --color-grey-97: #f8f8f8;
+}
+
+/* Base styles to make the background grey by default */
+body {
+  background-color: var(--color-grey-97);
+  font-family: 'Inter', sans-serif;
+}

@@ -1,5 +1,4 @@
 import time
-import os
 import math
 import random
 from selenium import webdriver
@@ -7,9 +6,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
-# CONFIG
-FILE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'index.html'))
-TARGET_URL = f"file:///{FILE_PATH}"
+# --- CONFIGURATION UPDATE ---
+TARGET_URL = "http://localhost:5173"
 
 options = webdriver.ChromeOptions()
 options.add_argument("--disable-blink-features=AutomationControlled")
@@ -31,15 +29,17 @@ def force_mouse_event(driver, x, y):
     """)
 
 try:
-    print("--- RUNNING SMART BOT (MIMIC) ---")
+    print("--- RUNNING SMART BOT (React Version) ---")
     driver.get(TARGET_URL)
-    time.sleep(1)
+    time.sleep(2)
 
-    driver.find_element(By.ID, "aadhar").send_keys("123456789012")
-    driver.find_element(By.ID, "otp").send_keys("123456")
+    # 1. Fill Inputs
+    driver.find_element(By.XPATH, "//input[@placeholder='Enter Name as per Aadhaar']").send_keys("Smart Bot")
+    driver.find_element(By.XPATH, "//input[@placeholder='XXXX XXXX XXXX']").send_keys("999988887777")
 
-    start_el = driver.find_element(By.ID, "otp")
-    end_el = driver.find_element(By.ID, "loginBtn")
+    # 2. Get Coordinates
+    start_el = driver.find_element(By.XPATH, "//input[@placeholder='XXXX XXXX XXXX']")
+    end_el = driver.find_element(By.XPATH, "//button[@type='submit']")
     
     start_x = start_el.rect['x']
     start_y = start_el.rect['y']
@@ -69,12 +69,11 @@ try:
 
     end_el.click()
     
-    time.sleep(2)
+    time.sleep(5)
     print("\nCHECK YOUR APP.PY TERMINAL!")
 
 except Exception as e:
-    import math # Import here just in case
     print(f"Error: {e}")
 finally:
-    time.sleep(5)
+    time.sleep(2)
     driver.quit()
